@@ -1,9 +1,9 @@
 import gzip
 import csv
 
-blocks_csv = csv.writer(open('../Data/ImportData/Blocks.csv', 'w'))
+importcsv = csv.writer(open('../Data/ImportData/Blocks.csv', 'w'))
 header = ['blockId:ID','hash','time',':LABEL']
-blocks_csv.writerow(header)
+importcsv.writerow(header)
 for i in range(10,21): 
     print(i)
     with gzip.open('../Data/Blocks/blockchair_bitcoin_blocks_202104' + str(i) + '.tsv.gz', "rt") as f:
@@ -11,4 +11,4 @@ for i in range(10,21):
         for line in f:
             fields = line.strip().split('\t')
             row = [fields[0], fields[1], fields[2], "Block"]
-            blocks_csv.writerow(row)
+            importcsv.writerow(row)
