@@ -1,10 +1,10 @@
 import gzip
 import csv
 
-blocks_csv = csv.writer(open('../Data/Outputs.csv', 'w'))
+blocks_csv = csv.writer(open('../Data/ImportData/Outputs.csv', 'w'))
 header = [':START_ID','time','value','value_usd','type','is_spendable',':END_ID',':TYPE']
 blocks_csv.writerow(header)
-for i in range(10,31): 
+for i in range(10,21): 
     print(i)
     with gzip.open('../Data/Outputs/blockchair_bitcoin_outputs_202104' + str(i) + '.tsv.gz', "rt") as f:
         f.readline()
