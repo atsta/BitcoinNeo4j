@@ -1,16 +1,13 @@
-from neo4j import GraphDatabase
 import os
 import json
+from py2neo import Graph
 
-uri = "neo4j://localhost:7687"
-user = os.environ.get('GRAPH_USR')
 password = os.environ.get('GRAPH_PSW')
-driver = GraphDatabase.driver(uri, auth=(user, password))
-session = driver.session()
+graph = Graph(password=password)
 
-def query1(start_date, end_date):
+def query1():
     query = '''
-    MATCH 
+    MATCH (n:Guessed_miner) RETURN n LIMIT 25
     '''
-    res = session.run(query)
+    res = graph.run(query)    
     return json.dumps(list(res))

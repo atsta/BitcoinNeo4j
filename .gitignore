@@ -2,3 +2,4 @@ Data
 .vagrant
 .env
 import.report
+__pycache__

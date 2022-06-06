@@ -20,11 +20,6 @@ for i in range(10,21):
             recipient_id = fields[6]
             recipient_ids.append(recipient_id)
 
-# recipient_ids_unique = []
-# for recipient_id in recipient_ids:
-#     if recipient_id not in recipient_ids_unique:
-#         recipient_ids_unique.append(recipient_id)
-
 recipient_ids_set= set(recipient_ids)
 recipient_ids_unique = (list(recipient_ids_set))
 
