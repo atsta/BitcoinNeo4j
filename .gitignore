@@ -1,2 +1,4 @@
 Data
 .vagrant
+.env
+import.report
