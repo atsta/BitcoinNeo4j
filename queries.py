@@ -12,3 +12,46 @@ def query1(_hash_):
     '''
     res = graph.run(query, hash=_hash_)    
     return json.dumps(list(res))
+
+def query2():
+    query='''
+    MATCH (r:Recipient)<-[rel:HAS_RECEIVED]-(t:Transaction)
+    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:01:53"
+    RETURN r.recipient_id, rel.value, rel.value_usd
+    '''
+
+def query3(): 
+    query=
+    '''
+    MATCH (t:Transaction)-[:BELONGS_TO]->(:Block {blockId: "678534"})
+    RETURN count(t), sum(t.input_total), sum(t.output_total), sum(t.fee)
+    '''
+
+def query4(): 
+    query=
+    '''
+    MATCH (r:Recipient)<-[:HAS_RECEIVED]-(t:Transaction)
+    WHERE t.time ="2021-04-10 00:01:52"
+    WITH t, count(t) AS numTransactions, r.recipient_id as recipient, collect(t.hash) as transactions
+    WHERE  numTransactions = 3
+    RETURN recipient, numTransactions, transactions
+    '''
+
+def query5(): 
+    query=
+    '''
+    MATCH (r:Recipient)-[rel:HAS_GIVEN]->(:Transaction)
+    WHERE r.recipient_id ="134RBvQhLnwzfGdUAzKkSy257e6kuokSe9" and rel.time = "2021-04-16 23:43:32"
+    WITH rel, sum(rel.value_usd) AS totalValueUSD
+    RETURN totalValueUSD
+    '''
+
+def query12(): 
+    query=
+    '''
+    MATCH (g:Guessed_miner)<-[rel:REWARDED]-(b:Block)
+    WHERE b.time >= "2021-04-10 00:01:52" AND b.time <= "2021-04-14 00:03:53"
+    WITH collect(g.guessed_miner_id) as miner, rel
+    RETURN miner, sum (rel.reward) as totalReward, count(rel) as numBlocks
+    ORDER BY totalReward DESC LIMIT 5
+    '''

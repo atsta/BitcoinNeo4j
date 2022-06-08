@@ -13,6 +13,7 @@ def not_found(error=None):
 def _query1():
     args = request.args
     _hash_ = args.get("hash", type=str)
+    
     if _hash_ and request.method == 'GET':
         res = queries.query1(_hash_)
         return res
