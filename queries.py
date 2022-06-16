@@ -69,6 +69,10 @@ def query7():
 def query8(): 
     query=
     '''
+    MATCH (r:Recipient)-[g:HAS_GIVEN]->(t:Transaction)-[:BELONGS_TO]->(b:Block)
+    WHERE b.blockId = "679043" 
+    WITH r.recipient_id as input_recipient, SUM(g.value_usd) as value_usd_agg, SUM(g.value) as value_agg
+    RETURN input_recipient, MAX(value_usd_agg/value_agg) AS total_count, value_usd_agg, value_agg
     '''
 
 def query9(): 
