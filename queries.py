@@ -59,6 +59,11 @@ def query6():
 def query7(): 
     query=
     '''
+    MATCH (in_r:Recipient)-[in_rel:HAS_GIVEN*]->(t:Transaction)-[out_rel:HAS_RECEIVED*]->(out_r:Recipient)
+    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
+    WITH in_r.recipient_id as input_recipient, out_r.recipient_id as output_recipient, SUM(out_rel.value_usd) as out_value, SUM(in_rel.value_usd) as in_value
+    RETURN input_recipient, out_value + in_value AS total_value, output_recipient
+    ORDER BY total_value DESC LIMIT 5
     '''
 
 def query8(): 
