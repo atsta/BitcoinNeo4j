@@ -88,6 +88,15 @@ def query10():
 def query11(): 
     query=
     '''
+    MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
+    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
+    WITH t.hash as transaction, COUNT(in_r.recipient_id) as in_count, COUNT(out_r.recipient_id) as out_count
+    WITH MAX(in_count + out_count) AS max_count
+    MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
+    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
+    WITH t as transaction, COUNT(in_r.recipient_id) as in_count, COUNT(out_r.recipient_id) as out_count, max_count
+    WHERE out_count + in_count = max_count 
+    RETURN transaction.hash as max_transaction_hash, max_count, transaction.input_total as input_total, transaction.output_total as output_total, transaction.fee as fee, transaction.time as time
     '''
 
 def query12(): 
