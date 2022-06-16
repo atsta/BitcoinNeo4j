@@ -46,6 +46,41 @@ def query5():
     RETURN totalValueUSD
     '''
 
+def query6(): 
+    query=
+    '''
+    MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
+    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
+    WITH in_r.recipient_id as input_recipient, t.time as day, collect(out_r.recipient_id) as out_recipients, count(out_r.recipient_id) as out_count
+    RETURN input_recipient, day, out_count, out_recipients
+    ORDER BY out_count DESC LIMIT 5
+    '''
+
+def query7(): 
+    query=
+    '''
+    '''
+
+def query8(): 
+    query=
+    '''
+    '''
+
+def query9(): 
+    query=
+    '''
+    '''
+
+def query10(): 
+    query=
+    '''
+    '''
+
+def query11(): 
+    query=
+    '''
+    '''
+
 def query12(): 
     query=
     '''
