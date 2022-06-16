@@ -6,7 +6,7 @@ password = os.environ.get('GRAPH_PSW')
 graph = Graph(password=password)
 
 def query1(_hash_):
-    query = '''
+    query='''
     MATCH (r:Recipient)-[rel:HAS_GIVEN]->(:Transaction {hash: $hash })
     RETURN r.recipient_id, rel.value, rel.value_usd
     '''
@@ -20,12 +20,13 @@ def query2():
     RETURN r.recipient_id, rel.value, rel.value_usd
     '''
 
-def query3(): 
-    query=
-    '''
-    MATCH (t:Transaction)-[:BELONGS_TO]->(:Block {blockId: "678534"})
+def query3(_blockId_): 
+    query='''
+    MATCH (t:Transaction)-[:BELONGS_TO]->(:Block {blockId: $blockId })
     RETURN count(t), sum(t.input_total), sum(t.output_total), sum(t.fee)
     '''
+    res = graph.run(query, blockId=_blockId_)   
+    return json.dumps(list(res)) 
 
 def query4(): 
     query=
@@ -69,7 +70,7 @@ def query7():
 def query8(): 
     query=
     '''
-    MATCH (r:Recipient)-[g:HAS_GIVEN]->(t:Transaction)-[:BELONGS_TO]->(b:Block {blockId: "679043" })
+    MATCH (r:Recipient)-[g:HAS_GIVEN]->(t:Transaction)-[:BELONGS_TO]->(b:Block {blockId: "679043"})
     WITH r.recipient_id as input_recipient, SUM(g.value_usd) as value_usd_agg, SUM(g.value) as value_agg
     RETURN input_recipient, MAX(value_usd_agg/value_agg) AS total_count, value_usd_agg, value_agg
     '''
