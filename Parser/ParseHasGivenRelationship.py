@@ -10,5 +10,5 @@ for i in range(10,21):
         f.readline()
         for line in f:
             fields = line.strip().split('\t')
-            row = [fields[6], fields[3], fields[4], fields[5], fields[7], fields[10], fields[11], fields[11], fields[14], fields[15], fields[19], fields[1], "HAS_GIVEN"]
+            row = [fields[6], fields[3], fields[4], fields[5], fields[7], fields[10], fields[11], fields[12], fields[14], fields[15], fields[19], fields[1], "HAS_GIVEN"]
             importcsv.writerow(row)

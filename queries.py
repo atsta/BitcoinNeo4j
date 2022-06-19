@@ -29,8 +29,7 @@ def query3(_blockId_):
     return json.dumps(list(res)) 
 
 def query4(): 
-    query=
-    '''
+    query='''
     MATCH (r:Recipient)<-[:HAS_RECEIVED]-(t:Transaction)
     WHERE t.time ="2021-04-10 00:01:52"
     WITH t, count(t) AS numTransactions, r.recipient_id as recipient, collect(t.hash) as transactions
@@ -39,8 +38,7 @@ def query4():
     '''
 
 def query5(): 
-    query=
-    '''
+    query='''
     MATCH (r:Recipient)-[rel:HAS_GIVEN]->(:Transaction)
     WHERE r.recipient_id ="134RBvQhLnwzfGdUAzKkSy257e6kuokSe9" and rel.time = "2021-04-16 23:43:32"
     WITH rel, sum(rel.value_usd) AS totalValueUSD
@@ -48,8 +46,7 @@ def query5():
     '''
 
 def query6(): 
-    query=
-    '''
+    query='''
     MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
     WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
     WITH in_r.recipient_id as input_recipient, t.time as day, collect(out_r.recipient_id) as out_recipients, count(out_r.recipient_id) as out_count
@@ -58,8 +55,7 @@ def query6():
     '''
 
 def query7(): 
-    query=
-    '''
+    query='''
     MATCH (in_r:Recipient)-[in_rel:HAS_GIVEN*]->(t:Transaction)-[out_rel:HAS_RECEIVED*]->(out_r:Recipient)
     WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
     WITH in_r.recipient_id as input_recipient, out_r.recipient_id as output_recipient, SUM(out_rel.value_usd) as out_value, SUM(in_rel.value_usd) as in_value
@@ -68,26 +64,22 @@ def query7():
     '''
 
 def query8(): 
-    query=
-    '''
+    query='''
     MATCH (r:Recipient)-[g:HAS_GIVEN]->(t:Transaction)-[:BELONGS_TO]->(b:Block {blockId: "679043"})
     WITH r.recipient_id as input_recipient, SUM(g.value_usd) as value_usd_agg, SUM(g.value) as value_agg
     RETURN input_recipient, MAX(value_usd_agg/value_agg) AS total_count, value_usd_agg, value_agg
     '''
 
 def query9(): 
-    query=
-    '''
+    query='''
     '''
 
 def query10(): 
-    query=
-    '''
+    query='''
     '''
 
 def query11(): 
-    query=
-    '''
+    query='''
     MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
     WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
     WITH t.hash as transaction, COUNT(in_r.recipient_id) as in_count, COUNT(out_r.recipient_id) as out_count
@@ -100,8 +92,7 @@ def query11():
     '''
 
 def query12(): 
-    query=
-    '''
+    query='''
     MATCH (g:Guessed_miner)<-[rel:REWARDED]-(b:Block)
     WHERE b.time >= "2021-04-10 00:01:52" AND b.time <= "2021-04-14 00:03:53"
     WITH collect(g.guessed_miner_id) as miner, rel
