@@ -2,7 +2,7 @@ import gzip
 import csv
 
 importcsv = csv.writer(open('../Data/ImportData/Rewards.csv', 'w'))
-header = [':START_ID','reward','reward_usd',':END_ID',':TYPE']
+header = [':START_ID','reward:float','reward_usd:float',':END_ID',':TYPE']
 importcsv.writerow(header)
 for i in range(10,21): 
     print(i)

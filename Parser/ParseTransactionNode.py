@@ -2,7 +2,7 @@ import gzip
 import csv
 
 importcsv = csv.writer(open('../Data/ImportData/Transactions.csv', 'w'))
-header = ['hash:ID','time','size','weight','is_coinbase','has_witness','input_total','input_total_usd','output_total','output_total_usd','fee','fee_usd','fee_per_kwu','fee_per_kwu_usd',':LABEL']
+header = ['hash:ID','time','size:int','weight:int','is_coinbase','has_witness','input_total:float','input_total_usd:float','output_total:float','output_total_usd:float','fee:float','fee_usd:float','fee_per_kwu:float','fee_per_kwu_usd:float',':LABEL']
 importcsv.writerow(header)
 for i in range(10,21): 
     print(i)
