@@ -20,16 +20,17 @@ def _query1():
     else:
         return not_found()
 
-# @app.route('/query2', methods = ['GET'])
-# def _query2():
-#     args = request.args
-#     _hash_ = args.get("hash", type=str)
-    
-#     if _hash_ and request.method == 'GET':
-#         res = queries.query1(_hash_)
-#         return res
-#     else:
-#         return not_found()
+@app.route('/query2', methods = ['GET'])
+def _query2():
+    args = request.args
+    _datefrom_ = args.get("datefrom", type=str)
+    _dateto_ = args.get("dateto", type=str)
+
+    if _datefrom_ and _dateto_ and request.method == 'GET':
+        res = queries.query2(_datefrom_, _dateto_)
+        return res
+    else:
+        return not_found()
 
 # @app.route('/query3', methods = ['GET'])
 # def _query3():

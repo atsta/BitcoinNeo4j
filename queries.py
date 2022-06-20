@@ -13,12 +13,16 @@ def query1(_hash_):
     res = graph.run(query, hash=_hash_)    
     return json.dumps(list(res))
 
-def query2():
+def query2(_datefrom_, _dateto_):
     query='''
+    WITH apoc.date.convertFormat($datefrom, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as datefrom, 
+    apoc.date.convertFormat($dateto, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as dateto
     MATCH (r:Recipient)<-[rel:HAS_RECEIVED]-(t:Transaction)
-    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:01:53"
+    WHERE t.time >= datefrom AND t.time <= dateto
     RETURN r.recipient_id, rel.value, rel.value_usd
     '''
+    res = graph.run(query, datefrom=_datefrom_, dateto=_dateto_)    
+    return json.dumps(list(res))
 
 def query3(_blockId_): 
     query='''
