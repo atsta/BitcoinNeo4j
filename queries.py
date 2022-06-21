@@ -27,27 +27,31 @@ def query2(_datefrom_, _dateto_):
 def query3(_blockId_): 
     query='''
     MATCH (t:Transaction)-[:BELONGS_TO]->(:Block {blockId: $blockId })
-    RETURN count(t), sum(t.input_total), sum(t.output_total), sum(t.fee)
+    RETURN COUNT(t), SUM(t.input_total), SUM(t.output_total), SUM(t.fee)
     '''
-    res = graph.run(query, blockId=_blockId_)   
-    return json.dumps(list(res)) 
+    return json.dumps(list(graph.run(query, blockId=_blockId_)))
 
-def query4(): 
+def query4(_day_, _numTransactions_): 
     query='''
+    WITH apoc.date.convertFormat($day, "yyyy-MM-dd", 'yyyy-MM-dd') as inputday
     MATCH (r:Recipient)<-[:HAS_RECEIVED]-(t:Transaction)
-    WHERE t.time ="2021-04-10 00:01:52"
+    WHERE t.time STARTS WITH inputday
     WITH t, count(t) AS numTransactions, r.recipient_id as recipient, collect(t.hash) as transactions
-    WHERE  numTransactions = 3
-    RETURN recipient, numTransactions, transactions
+    WHERE  numTransactions=$num
+    RETURN recipient,t.time, numTransactions, transactions
     '''
+    res = graph.run(query, day=_day_, num=_numTransactions_)  
+    return json.dumps(list(res))
 
-def query5(): 
+def query5(_day_, _input_recipient_): 
     query='''
+    WITH apoc.date.convertFormat($day, "yyyy-MM-dd", 'yyyy-MM-dd') as inputday
     MATCH (r:Recipient)-[rel:HAS_GIVEN]->(:Transaction)
-    WHERE r.recipient_id ="134RBvQhLnwzfGdUAzKkSy257e6kuokSe9" and rel.time = "2021-04-16 23:43:32"
-    WITH rel, sum(rel.value_usd) AS totalValueUSD
+    WHERE r.recipient_id=$input_recipient AND rel.time STARTS WITH inputday
+    WITH SUM(rel.value_usd) AS totalValueUSD
     RETURN totalValueUSD
     '''
+    return json.dumps(list(graph.run(query, day=_day_, input_recipient=_input_recipient_)))
 
 def query6(): 
     query='''

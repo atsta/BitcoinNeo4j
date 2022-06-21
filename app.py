@@ -32,16 +32,40 @@ def _query2():
     else:
         return not_found()
 
-# @app.route('/query3', methods = ['GET'])
-# def _query3():
-#     args = request.args
-#     _blockId_ = args.get("blockId", type=str)
+@app.route('/query3', methods = ['GET'])
+def _query3():
+    args = request.args
+    _blockId_ = args.get("blockId", type=str)
     
-#     if _blockId_ and request.method == 'GET':
-#         res = queries.query3(_blockId_)
-#         return res
-#     else:
-#         return not_found()
+    if _blockId_ and request.method == 'GET':
+        res = queries.query3(_blockId_)
+        return res
+    else:
+        return not_found()
+
+@app.route('/query4', methods = ['GET'])
+def _query4():
+    args = request.args
+    _day_ = args.get("day", type=str)
+    _numTransactions_ = args.get("numTransactions", type=int)
+
+    if _day_ and _numTransactions_ and request.method == 'GET':
+        res = queries.query4(_day_, _numTransactions_)
+        return res
+    else:
+        return not_found()
+
+@app.route('/query5', methods = ['GET'])
+def _query5():
+    args = request.args
+    _day_ = args.get("day", type=str)
+    _input_recipient_ = args.get("input_recipient", type=str)
+
+    if _day_ and _input_recipient_ and request.method == 'GET':
+        res = queries.query5(_day_, _input_recipient_)
+        return res
+    else:
+        return not_found()
 
 if __name__ == '__main__':
     app.run()
