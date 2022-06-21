@@ -67,5 +67,56 @@ def _query5():
     else:
         return not_found()
 
+@app.route('/query6', methods = ['GET'])
+def _query6():
+    args = request.args
+    _datefrom_ = args.get("datefrom", type=str)
+    _dateto_ = args.get("dateto", type=str)
+    _topk_ = args.get("topk", type=int)
+
+    if _datefrom_ and _dateto_ and _topk_ and request.method == 'GET':
+        res = queries.query6(_datefrom_, _dateto_, _topk_)
+        return res
+    else:
+        return not_found()
+
+@app.route('/query7', methods = ['GET'])
+def _query7():
+    args = request.args
+    _datefrom_ = args.get("datefrom", type=str)
+    _dateto_ = args.get("dateto", type=str)
+    _topk_ = args.get("topk", type=int)
+
+    if _datefrom_ and _dateto_ and _topk_ and request.method == 'GET':
+        res = queries.query7(_datefrom_, _dateto_, _topk_)
+        return res
+    else:
+        return not_found()
+
+@app.route('/query11', methods = ['GET'])
+def _query11():
+    args = request.args
+    _datefrom_ = args.get("datefrom", type=str)
+    _dateto_ = args.get("dateto", type=str)
+
+    if _datefrom_ and _dateto_ and request.method == 'GET':
+        res = queries.query11(_datefrom_, _dateto_)
+        return res
+    else:
+        return not_found()
+
+@app.route('/query12', methods = ['GET'])
+def _query12():
+    args = request.args
+    _datefrom_ = args.get("datefrom", type=str)
+    _dateto_ = args.get("dateto", type=str)
+    _topk_ = args.get("topk", type=int)
+
+    if _datefrom_ and _dateto_ and _topk_ and request.method == 'GET':
+        res = queries.query12(_datefrom_, _dateto_, _topk_)
+        return res
+    else:
+        return not_found()
+
 if __name__ == '__main__':
     app.run()

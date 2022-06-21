@@ -53,23 +53,31 @@ def query5(_day_, _input_recipient_):
     '''
     return json.dumps(list(graph.run(query, day=_day_, input_recipient=_input_recipient_)))
 
-def query6(): 
+def query6(_datefrom_, _dateto_, _topk_): 
     query='''
+    WITH apoc.date.convertFormat($datefrom, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as datefrom, 
+    apoc.date.convertFormat($dateto, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as dateto
     MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
-    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
+    WHERE t.time >= datefrom AND t.time <= dateto
     WITH in_r.recipient_id as input_recipient, t.time as day, collect(out_r.recipient_id) as out_recipients, count(out_r.recipient_id) as out_count
     RETURN input_recipient, day, out_count, out_recipients
-    ORDER BY out_count DESC LIMIT 5
+    ORDER BY out_count DESC LIMIT $topK
     '''
+    return json.dumps(list(graph.run(query, datefrom=_datefrom_, dateto=_dateto_, topK=_topk_)))
 
-def query7(): 
+def query7(_datefrom_, _dateto_, _topk_): 
     query='''
+    WITH apoc.date.convertFormat($datefrom, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as datefrom, 
+    apoc.date.convertFormat($dateto, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as dateto
     MATCH (in_r:Recipient)-[in_rel:HAS_GIVEN*]->(t:Transaction)-[out_rel:HAS_RECEIVED*]->(out_r:Recipient)
-    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
-    WITH in_r.recipient_id as input_recipient, out_r.recipient_id as output_recipient, SUM(out_rel.value_usd) as out_value, SUM(in_rel.value_usd) as in_value
-    RETURN input_recipient, out_value + in_value AS total_value, output_recipient
-    ORDER BY total_value DESC LIMIT 5
+    WHERE t.time >= datefrom AND t.time <= dateto
+    WITH in_r.recipient_id as input_recipient, out_r.recipient_id as output_recipient, 
+    reduce(out_total = 1, r IN out_rel | out_total + r.value_usd) AS out_total, 
+    reduce(in_total = 1, r IN in_rel | in_total + r.value_usd) AS in_total
+    RETURN input_recipient, out_total+in_total as total, output_recipient
+    ORDER BY total DESC LIMIT $topK
     '''
+    return json.dumps(list(graph.run(query, datefrom=_datefrom_, dateto=_dateto_, topK=_topk_)))
 
 def query8(): 
     query='''
@@ -86,24 +94,34 @@ def query10():
     query='''
     '''
 
-def query11(): 
+def query11(_datefrom_, _dateto_): 
     query='''
+    WITH apoc.date.convertFormat($datefrom, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as datefrom, 
+    apoc.date.convertFormat($dateto, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as dateto
     MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
-    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
-    WITH t.hash as transaction, COUNT(in_r.recipient_id) as in_count, COUNT(out_r.recipient_id) as out_count
-    WITH MAX(in_count + out_count) AS max_count
+    WHERE t.time >= datefrom AND t.time <= dateto
+    WITH t.hash as transaction, COUNT(in_r.recipient_id) as in_count, COUNT(out_r.recipient_id) as out_count, datefrom, dateto
+    WITH MAX(in_count + out_count) AS max_count, datefrom, dateto
     MATCH (in_r:Recipient)-[:HAS_GIVEN]->(t:Transaction)-[out_rel:HAS_RECEIVED]->(out_r:Recipient)
-    WHERE t.time >= "2021-04-10 00:01:52" AND t.time <= "2021-04-10 00:03:53"
+    WHERE t.time >= datefrom AND t.time <= dateto
     WITH t as transaction, COUNT(in_r.recipient_id) as in_count, COUNT(out_r.recipient_id) as out_count, max_count
     WHERE out_count + in_count = max_count 
-    RETURN transaction.hash as max_transaction_hash, max_count, transaction.input_total as input_total, transaction.output_total as output_total, transaction.fee as fee, transaction.time as time
+    RETURN transaction.hash as max_transaction_hash, max_count, transaction.input_total as input_total, 
+    transaction.output_total as output_total, transaction.fee as fee, transaction.time as time
     '''
 
-def query12(): 
+    res = graph.run(query, datefrom=_datefrom_, dateto=_dateto_)    
+    return json.dumps(list(res))
+
+def query12(_datefrom_, _dateto_, _topk_): 
     query='''
+    WITH apoc.date.convertFormat($datefrom, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as datefrom, 
+    apoc.date.convertFormat($dateto, "yyyy-MM-dd'T'HH:mm:ss", 'yyyy-MM-dd HH:mm:ss') as dateto
     MATCH (g:Guessed_miner)<-[rel:REWARDED]-(b:Block)
-    WHERE b.time >= "2021-04-10 00:01:52" AND b.time <= "2021-04-14 00:03:53"
+    WHERE b.time >= datefrom AND b.time <= dateto
     WITH collect(g.guessed_miner_id) as miner, rel
     RETURN miner, sum (rel.reward) as totalReward, count(rel) as numBlocks
     ORDER BY totalReward DESC LIMIT 5
     '''
+    res = graph.run(query, datefrom=_datefrom_, dateto=_dateto_, topK=_topk_)    
+    return json.dumps(list(res))
