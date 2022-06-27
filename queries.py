@@ -79,20 +79,34 @@ def query7(_datefrom_, _dateto_, _topk_):
     '''
     return json.dumps(list(graph.run(query, datefrom=_datefrom_, dateto=_dateto_, topK=_topk_)))
 
-def query8(): 
+def query8(_block_): 
     query='''
-    MATCH (r:Recipient)-[g:HAS_GIVEN]->(t:Transaction)-[:BELONGS_TO]->(b:Block {blockId: "679043"})
+    MATCH (r:Recipient)-[g:HAS_GIVEN]->(:Transaction)-[:BELONGS_TO]->(b:Block {blockId: $block})
     WITH r.recipient_id as input_recipient, SUM(g.value_usd) as value_usd_agg, SUM(g.value) as value_agg
-    RETURN input_recipient, MAX(value_usd_agg/value_agg) AS total_count, value_usd_agg, value_agg
+    WITH MAX(value_agg/value_usd_agg) AS max_x_rate
+    MATCH (r:Recipient)-[g:HAS_GIVEN]->(:Transaction)-[:BELONGS_TO]->(b:Block {blockId: $block})
+    WITH SUM(g.value_usd) as value_usd_agg, SUM(g.value) as value_agg, r.recipient_id as input_recipient, max_x_rate
+    WHERE value_agg/value_usd_agg = max_x_rate
+    RETURN input_recipient, max_x_rate, value_agg, value_usd_agg
     '''
+    return json.dumps(list(graph.run(query, block=_block_)))
 
 def query9(): 
     query='''
     '''
-
-def query10(): 
+    
+def query10(_dayfrom_, _dayto_, _topk_): 
     query='''
+    WITH apoc.date.convertFormat($dayfrom, "yyyy-MM-dd", 'yyyy-MM-dd') as datefrom, 
+    apoc.date.convertFormat($dayto, "yyyy-MM-dd", 'yyyy-MM-dd') as dateto
+    MATCH (r:Recipient)-[rel:HAS_GIVEN]->(:Transaction)
+    WHERE rel.time >= datefrom AND rel.time <= dateto
+    WITH apoc.date.convertFormat(rel.time, "yyyy-MM-dd HH:mm:ss", 'yyyy-MM-dd') as day, AVG(rel.value) as avg_value, r
+    WITH day, MAX(avg_value) as max_avg, r
+    ORDER BY max_avg DESC LIMIT $topK
+    RETURN r.recipient_id, max_avg
     '''
+    return json.dumps(list(graph.run(query, dayfrom=_dayfrom_, dayto=_dayto_, topK=_topk_)))
 
 def query11(_datefrom_, _dateto_): 
     query='''

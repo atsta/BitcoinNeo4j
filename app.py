@@ -93,6 +93,30 @@ def _query7():
     else:
         return not_found()
 
+@app.route('/query8', methods = ['GET'])
+def _query8():
+    args = request.args
+    _block_ = args.get("block", type=str)
+
+    if _block_ and request.method == 'GET':
+        res = queries.query8(_block_)
+        return res
+    else:
+        return not_found()
+
+@app.route('/query10', methods = ['GET'])
+def _query10():
+    args = request.args
+    _dayfrom_ = args.get("dayfrom", type=str)
+    _dayto_ = args.get("dayto", type=str)
+    _topk_ = args.get("topk", type=int)
+
+    if _dayfrom_ and _dayto_ and _topk_ and request.method == 'GET':
+        res = queries.query10(_dayfrom_, _dayto_, _topk_)
+        return res
+    else:
+        return not_found()
+
 @app.route('/query11', methods = ['GET'])
 def _query11():
     args = request.args
