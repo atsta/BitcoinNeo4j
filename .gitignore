@@ -3,3 +3,4 @@ Data
 .env
 import.report
 __pycache__
+Report.*
